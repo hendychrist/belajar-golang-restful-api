@@ -13,6 +13,9 @@
   "paths": {
     "/categories" : {
       "get" : {
+        "security": [{
+          "CategoryAuth": []
+        }],
         "tags": ["Category API"],
         "description": "List all Categories",
         "summary": "List all Categories",
@@ -44,6 +47,9 @@
           }
       },
       "post": {
+        "security": [{
+          "CategoryAuth": []
+        }],
         "tags": ["Category API"],
         "description": "Create New Category",
         "summary": "Create New Category",
@@ -77,9 +83,12 @@
           }
         }
       }
-    },
-    "/categories/{categoryId}": {
+  },
+    "/categories/{categoryId}": { 
       "get": {
+        "security": [{
+          "CategoryAuth": []
+        }],
         "tags": ["Category API"],
         "summary": "Get category by Id",
         "description": "Get category by id",
@@ -116,6 +125,9 @@
         }
       },
       "put": {
+        "security": [{
+          "CategoryAuth": []
+        }],
         "tags": ["Category API"],
         "summary": "Update Category by Id",
         "description": "Update Category by Id",
@@ -159,10 +171,63 @@
             }
           }
         }
+      },
+      "delete": {
+        "security": [{
+          "CategoryAuth": []
+        }],
+        "tags": ["Category API"],
+        "summary": "Delete Category by Id",
+        "description": "Delete Category by Id",
+        "parameters": [
+                        {
+                        "name": "categoryId",
+                        "in": "path",
+                        "description": "Category Id"
+                      }
+                     ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200" : {
+            "description": "Success delete category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                                "code": {
+                                          "type": "number"
+                                        },
+                                "status": {
+                                            "type": "string"
+                                          }
+                                }
+
+                  }
+                }
+              }
+            }
+          }
+        }
       }
-    }
-  },
+    },
   "components": {
+    "securitySchemes": {
+      "CategoryAuth": {
+        "type" : "apiKey",
+        "in" : "header",
+        "name" : "X-API-Key",
+        "description": "Authentication for Category API"
+      }
+    },
     "schemas": {
       "CreateOrUpdateCategory" : {
         "type": "object",
