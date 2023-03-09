@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="belajar_golang_restful_api@localhost" uuid="c368eb2c-8239-48fe-8e60-030e13d06ecd">
+    <data-source source="LOCAL" name="belajar_golang_restful_api@localhost" uuid="6ee9a069-9eca-449c-8d49-2a36c94ef330">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
