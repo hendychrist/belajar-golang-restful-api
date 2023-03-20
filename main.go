@@ -1,11 +1,12 @@
 package main
 
 import (
-	"hendychrist/belajar-golang-restful-api/app"
-	"hendychrist/belajar-golang-restful-api/controller"
-	"hendychrist/belajar-golang-restful-api/helper"
-	"hendychrist/belajar-golang-restful-api/repository"
-	"hendychrist/belajar-golang-restful-api/service"
+	"belajar-golang-restful-api/app"
+	"belajar-golang-restful-api/controller"
+	"belajar-golang-restful-api/exception"
+	"belajar-golang-restful-api/helper"
+	"belajar-golang-restful-api/repository"
+	"belajar-golang-restful-api/service"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -28,6 +29,8 @@ func main() {
 	router.POST("/api/categories", categoryController.Create)
 	router.PUT("/api/categories/:categoryId", categoryController.Update)
 	router.DELETE("/api/categories/:categoryId", categoryController.Delete)
+
+	router.PanicHandler = exception.ErrorHandler
 
 	server := http.Server{
 		Addr:    "localhost:3000",

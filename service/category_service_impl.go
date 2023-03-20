@@ -1,13 +1,15 @@
 package service
 
 import (
+	"belajar-golang-restful-api/exception"
+	"belajar-golang-restful-api/helper"
+	"belajar-golang-restful-api/model/domain"
+	"belajar-golang-restful-api/model/web"
+	"belajar-golang-restful-api/repository"
 	"context"
 	"database/sql"
+
 	"github.com/go-playground/validator/v10"
-	"hendychrist/belajar-golang-restful-api/helper"
-	"hendychrist/belajar-golang-restful-api/model/domain"
-	"hendychrist/belajar-golang-restful-api/model/web"
-	"hendychrist/belajar-golang-restful-api/repository"
 )
 
 type CategoryServiceImpl struct {
@@ -50,7 +52,9 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, request.Id)
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	category.Name = request.Name
 
@@ -65,7 +69,9 @@ func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) 
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	service.CategoryRepository.Delete(ctx, tx, category)
 }
@@ -76,6 +82,9 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	return helper.ToCategoryResponse(category)
 }

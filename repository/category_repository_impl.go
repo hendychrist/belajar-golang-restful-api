@@ -1,11 +1,11 @@
 package repository
 
 import (
+	"belajar-golang-restful-api/helper"
+	"belajar-golang-restful-api/model/domain"
 	"context"
 	"database/sql"
 	"errors"
-	"hendychrist/belajar-golang-restful-api/helper"
-	"hendychrist/belajar-golang-restful-api/model/domain"
 )
 
 type CategoryRepositoryImpl struct {
@@ -37,8 +37,8 @@ func (repository *CategoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx
 }
 
 func (repository *CategoryRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, category domain.Category) {
-	SQL := "delete from category where id = ?"
-	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Id)
+	SQL := "DELETE FROM category WHERE id = ?"
+	_, err := tx.ExecContext(ctx, SQL, category.Id)
 	helper.PanicIfError(err)
 }
 
