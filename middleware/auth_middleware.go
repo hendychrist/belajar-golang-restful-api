@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"belajar-golang-restful-api/helper"
-	"belajar-golang-restful-api/model/web"
+	"hendychrist/belajar-golang-restful-api/helper"
+	"hendychrist/belajar-golang-restful-api/model/web"
 	"net/http"
 )
 

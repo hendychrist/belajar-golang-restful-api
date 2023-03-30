@@ -1,13 +1,13 @@
 package main
 
 import (
-	"belajar-golang-restful-api/app"
-	"belajar-golang-restful-api/controller"
-	"belajar-golang-restful-api/exception"
-	"belajar-golang-restful-api/helper"
-	"belajar-golang-restful-api/middleware"
-	"belajar-golang-restful-api/repository"
-	"belajar-golang-restful-api/service"
+	"hendychrist/belajar-golang-restful-api/app"
+	"hendychrist/belajar-golang-restful-api/controller"
+	"hendychrist/belajar-golang-restful-api/exception"
+	"hendychrist/belajar-golang-restful-api/helper"
+	"hendychrist/belajar-golang-restful-api/middleware"
+	"hendychrist/belajar-golang-restful-api/repository"
+	"hendychrist/belajar-golang-restful-api/service"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -22,6 +22,8 @@ func main() {
 	categoryRepository := repository.NewCategoryRepository()
 	categoryService := service.NewCategoryService(categoryRepository, db, validate)
 	categoryController := controller.NewCategoryController(categoryService)
+
+	// router := app.NewRouter(categoryController)
 
 	router := httprouter.New()
 
