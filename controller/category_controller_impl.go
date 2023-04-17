@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"hendychrist/belajar-golang-restful-api/helper"
-	"hendychrist/belajar-golang-restful-api/model/web"
-	"hendychrist/belajar-golang-restful-api/service"
+	"belajar-golang-restful-api/helper"
+	"belajar-golang-restful-api/model/web"
+	"belajar-golang-restful-api/service"
 	"net/http"
 	"strconv"
 

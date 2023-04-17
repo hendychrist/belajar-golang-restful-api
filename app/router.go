@@ -1,8 +1,8 @@
 package app
 
 import (
-	"hendychrist/belajar-golang-restful-api/controller"
-	"hendychrist/belajar-golang-restful-api/exception"
+	"belajar-golang-restful-api/controller"
+	"belajar-golang-restful-api/exception"
 
 	"github.com/julienschmidt/httprouter"
 )
