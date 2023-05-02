@@ -1,11 +1,11 @@
 package repository
 
 import (
+	"belajar-golang-restful-api/helper"
+	"belajar-golang-restful-api/model/domain"
 	"context"
 	"database/sql"
 	"errors"
-	"hendychrist/belajar-golang-restful-api/helper"
-	"hendychrist/belajar-golang-restful-api/model/domain"
 )
 
 type CategoryRepositoryImpl struct {

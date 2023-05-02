@@ -8,12 +8,21 @@ import (
 	"belajar-golang-restful-api/repository"
 	"belajar-golang-restful-api/service"
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"github.com/go-playground/validator"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"belajar-golang-restful-api/model/domain"
+	"context"
+	"strconv"
 )
 
 func setupTestDB() *sql.DB {
@@ -28,8 +37,7 @@ func setupTestDB() *sql.DB {
 	return db
 }
 
-func setupRouter() http.Handler {
-	db := setupTestDB()
+func setupRouter(db *sql.DB) http.Handler {
 	validate := validator.New()
 	categoryRepository := repository.NewCategoryRepository()
 	categoryService := service.NewCategoryService(categoryRepository, db, validate)
@@ -40,8 +48,14 @@ func setupRouter() http.Handler {
 	return middleware.NewAuthMiddleware(router)
 }
 
+func truncateCategory(db *sql.DB) {
+	db.Exec("TRUNCATE category")
+}
+
 func TestCreateCategorySuccess(t *testing.T) {
-	router := setupRouter()
+	db := setupTestDB()
+	truncateCategory(db)
+	router := setupRouter(db)
 
 	requestBody := strings.NewReader(`{"name":"Gadget"}`)
 	request := httptest.NewRequest(http.MethodPost, "http://localhost:3000/api/categories", requestBody)
@@ -52,7 +66,16 @@ func TestCreateCategorySuccess(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	response := recorder.Result()
-	assert.Equal(t, 200, response.StatusCode)
+	assert.Equal(t, 200, response.StatusCode, "unexpected status code")
+
+	body, _ := io.ReadAll(response.Body)
+	var responseBody map[string]interface{}
+	json.Unmarshal(body, &responseBody)
+	fmt.Println(responseBody)
+
+	assert.Equal(t, 200, int(responseBody["code"].(float64)), "Code :")
+	assert.Equal(t, "OK", responseBody["status"], "Status :")
+	assert.Equal(t, "Gadget", responseBody["data"].(map[string]interface{})["name"], "Data :")
 }
 
 func TestCreateCategoryFailed(t *testing.T) {
@@ -60,7 +83,38 @@ func TestCreateCategoryFailed(t *testing.T) {
 }
 
 func TestUpdateCategorySuccess(t *testing.T) {
+	db := setupTestDB()
+	truncateCategory(db)
 
+	tx, _ := db.Begin()
+	categoryRepository := repository.NewCategoryRepository()
+	category := categoryRepository.Save(context.Background(), tx, domain.Category{
+		Name: "Gadget",
+	})
+	tx.Commit()
+
+	router := setupRouter(db)
+
+	requestBody := strings.NewReader(`{"name":"Gadget"}`)
+	request := httptest.NewRequest(http.MethodPut, "http://localhost:3000/api/categories/"+strconv.Itoa(category.Id), requestBody)
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("X-API-Key", "RAHASIA")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	response := recorder.Result()
+	assert.Equal(t, 200, response.StatusCode, "unexpected status code")
+
+	body, _ := io.ReadAll(response.Body)
+	var responseBody map[string]interface{}
+	json.Unmarshal(body, &responseBody)
+	fmt.Println(responseBody)
+
+	assert.Equal(t, 200, int(responseBody["code"].(float64)), "Code :")
+	assert.Equal(t, "OK", responseBody["status"], "Status :")
+	// assert.Equal(t, category.Id, int(responseBody["data"].(map[string]interface{})["id"].(float64)), "Id :")
+	assert.Equal(t, "Gadget", responseBody["data"].(map[string]interface{})["name"], "Data :")
 }
 
 func TestUpdateCategoryFailed(t *testing.T) {
