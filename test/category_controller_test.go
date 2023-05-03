@@ -109,7 +109,16 @@ func TestUpdateCategorySuccess(t *testing.T) {
 	body, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(body, &responseBody)
-	fmt.Println(responseBody)
+
+	fmt.Println(" - ")
+	fmt.Println(" - ")
+	fmt.Println(" - ")
+	fmt.Println("Response Body : ", responseBody)
+	fmt.Printf("Category.Id: %v\n", category.Id)
+	fmt.Println("Hasil Convert :  ", int(responseBody["data"].(map[string]interface{})["id"].(float64)))
+	fmt.Println(" - ")
+	fmt.Println(" - ")
+	fmt.Println(" - ")
 
 	assert.Equal(t, 200, int(responseBody["code"].(float64)), "Code :")
 	assert.Equal(t, "OK", responseBody["status"], "Status :")
@@ -118,7 +127,35 @@ func TestUpdateCategorySuccess(t *testing.T) {
 }
 
 func TestUpdateCategoryFailed(t *testing.T) {
+	db := setupTestDB()
+	truncateCategory(db)
 
+	tx, _ := db.Begin()
+	categoryRepository := repository.NewCategoryRepository()
+	category := categoryRepository.Save(context.Background(), tx, domain.Category{
+		Name: "Gadget",
+	})
+	tx.Commit()
+
+	router := setupRouter(db)
+
+	requestBody := strings.NewReader(`{"name":""}`)
+	request := httptest.NewRequest(http.MethodPut, "http://localhost:3000/api/categories/"+strconv.Itoa(category.Id), requestBody)
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("X-API-Key", "RAHASIA")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	response := recorder.Result()
+	assert.Equal(t, 400, response.StatusCode, "unexpected status code")
+
+	body, _ := io.ReadAll(response.Body)
+	var responseBody map[string]interface{}
+	json.Unmarshal(body, &responseBody)
+
+	assert.Equal(t, 400, int(responseBody["code"].(float64)), "Code :")
+	assert.Equal(t, "BAD REQUEST", responseBody["status"], "Status :")
 }
 
 func TestGetCategorySuccess(t *testing.T) {
